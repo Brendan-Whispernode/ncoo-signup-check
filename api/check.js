@@ -1,5 +1,5 @@
 // POST /api/check  { "email": "someone@example.com" }
-// -> { "subscribed": true | false }
+// -> { "subscribed": true | false, "previouslySignedUp": true | false }
 //
 // Answers one question only: is this email already subscribed to
 // North Conway Olive Oil marketing emails in Klaviyo?
@@ -65,7 +65,9 @@ module.exports = async function handler(req, res) {
     const profile = (data.data || [])[0];
     const mk = profile?.attributes?.subscriptions?.email?.marketing || {};
     const subscribed = mk.consent === "SUBSCRIBED" && mk.can_receive_email_marketing !== false;
-    return res.status(200).json({ subscribed });
+    // Anyone who has ever opted in (still subscribed OR later unsubscribed) is not "new"
+    const previouslySignedUp = mk.consent === "SUBSCRIBED" || mk.consent === "UNSUBSCRIBED";
+    return res.status(200).json({ subscribed, previouslySignedUp });
   } catch (e) {
     return res.status(502).json({ error: "lookup failed" });
   }
