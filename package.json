@@ -1,0 +1,6 @@
+{
+  "name": "ncoo-signup-check",
+  "private": true,
+  "description": "Checks whether an email is already subscribed in Klaviyo, for the North Conway Olive Oil in-store free-mini page.",
+  "engines": { "node": ">=18" }
+}
